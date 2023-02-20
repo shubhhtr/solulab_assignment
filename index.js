@@ -32,6 +32,28 @@ app.get("/read:name", async (req, resp)=>{
 
 
 
+app.delete("/product/:id",async (req,resp)=>{
+    
+    const result=await Product.deleteOne({_id:req.params.id});
+    if(result){
+        resp.send(result);
+    }
+    else{
+        resp.send({result:"Item not found"});
+    }
+});
+
+
+
+app.post("/create", async (req,resp)=>{
+
+    let product= new Product(req.body);
+    const result=await product.save();
+    resp.send(result);
+
+});
+
+
 
 
 app.listen(5000);
