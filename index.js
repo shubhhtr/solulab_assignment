@@ -20,4 +20,18 @@ app.get("/readAll", async (re,resp)=>{
 
 
 
+app.get("/read:name", async (req, resp)=>{
+    const result = await Product.findOne({productName:req.params.name}).populate("categoryId");
+    if(result){
+        resp.send(result);
+    }
+    else{
+        resp.send({result:"No such record found"});
+    }
+});
+
+
+
+
+
 app.listen(5000);
