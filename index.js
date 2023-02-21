@@ -7,6 +7,7 @@ const app=express();
 app.use(express.json());
 app.use(cors());
 
+//READ ALL THE PRODUCTS AND THEIR CATEGORIES
 
 app.get("/readAll", async (re,resp)=>{
     let result=await Product.find().populate("categoryId");
@@ -20,6 +21,8 @@ app.get("/readAll", async (re,resp)=>{
 
 
 
+//READ ONE PRODUCT ACCORDING TO THE PRODUCT NAME
+
 app.get("/read:name", async (req, resp)=>{
     const result = await Product.findOne({productName:req.params.name}).populate("categoryId");
     if(result){
@@ -32,7 +35,9 @@ app.get("/read:name", async (req, resp)=>{
 
 
 
-app.delete("/product/:id",async (req,resp)=>{
+//DELETE ONE PRODUCT ACCORDING TO THE PRODUCT ID PROVIDED
+
+app.delete("/delete/:id",async (req,resp)=>{
     
     const result=await Product.deleteOne({_id:req.params.id});
     if(result){
@@ -45,15 +50,33 @@ app.delete("/product/:id",async (req,resp)=>{
 
 
 
+//INSERTING NEW RECORDS
+
 app.post("/create", async (req,resp)=>{
 
-    let product= new Product(req.body);
+    let newcategory= new Category({
+        categoryName: req.body.categoryname
+    });
+    const category=await newcategory.save();
+
+    let product= new Product({
+        productName:req.body.productName,
+        qtyPerUnit : req.body.qtyPerUnit,		
+        unitPrice : req.body.unitPrice,			
+        unitInStock : req.body.unitInStock,		
+        discontinued : req.body.discontinued,
+        categoryId : category._id
+    });
     const result=await product.save();
     resp.send(result);
 
 });
 
-app.put("/product/:id", async (req,resp)=>{
+
+
+//UPDATES ONE PARTICULAR PRODUCT ACCORDING TO THE PRODUCT ID
+
+app.put("/update/:id", async (req,resp)=>{
     let result=await Product.updateOne(
         {_id:req.params.id},
         {
